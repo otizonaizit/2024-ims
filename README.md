@@ -56,8 +56,8 @@ Organizing, testing, documenting, and distributing scientific code (6h)
 -----------------------------------------------------------------------
 The hype about reproducible science seems to imply that putting on GitHub the
 scripts that re-create the plots of your paper is all that is needed. Have you
-ever tried to use code published by others scientists to do anything _else_ than
-reproduce their pictures? Have you been forced to learn how to manage docker
+ever tried to use code published by other scientists to do anything _else_ than
+reproduce their plots? Have you been forced to learn how to manage docker
 containers on the institute's cluster because the scientific software you wanted
 to use could not be installed in any more useful way? Did you have to spend
 precious months of your PhD by trying to figure out what the code of that
