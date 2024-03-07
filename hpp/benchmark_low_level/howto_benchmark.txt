@@ -1,0 +1,31 @@
+# Install the package lmbench
+# configure the system with:
+cd /usr/lib/lmbench/scripts
+./config-run
+
+# remember to select only the "hardware" benchmarks and to set the amount of memory to
+# something not too big (2GB is enough, i.e. 2048 MB)
+# the command above will create a configuration file in 
+# /usr/lib/lmbench/bin/x86_64-linux-gnu/CONFIG.<hostname>
+
+# the benchmarks can then be run with:
+systemd-run --wait -p CPUAffinity=X lmbench-run
+# where X is the CPU you want to run on
+
+# results are then stored in /var/lib/lmbench/results/x86_64-linux-gnu
+
+
+### Other potentially interesting benchmarking tools:
+https://github.com/RRZE-HPC/likwid
+https://github.com/RRZE-HPC/TheBandwidthBenchmark
+
+# old, but somehow standard?
+https://www.cs.virginia.edu/stream/
+
+# sysbench (installed)
+
+# https://github.com/brendangregg/Misc/blob/master/microbenchmarks/microbench_ubuntu.sh
+
+# some kind of gui thing
+https://github.com/clamchowder/MicrobenchmarksGui
+
