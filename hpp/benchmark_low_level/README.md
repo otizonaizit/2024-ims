@@ -6,9 +6,9 @@ These are the results of a low level memory benchmark (written in C) on my lapto
   - CPU i7-1365U: 
     - 2x "performance cores" max 5.20 GHz (0.19 ns/cycle) with Hyperthreading
     - 8x "efficient cores" max 3.90 GHz (0.26 ns per cycle) without HT
-  - L1 cache P-Core 48 KB    , hit rate 4 cycles = 1.72 ns
-  - L1 cache E-Core 32 KB    , hit rate 4 cycles = 1.72 ns
-  - L2 cache P-Core 1280 KB  , hit rate 10 cycles = 4.3 ns
+  - L1 (data) cache P-Core 48 KB
+  - L1 (data) cache E-Core 32 KB
+  - L2 cache P-Core 1280 KB
   - L2 cache E-Core 2048 KB (shared x4)
   - L3 cache 12 MB (shared P+E-Cores)
   - RAM DDR5-5200: 32GB (16GB soldered + 16GB bank):
@@ -18,6 +18,7 @@ These are the results of a low level memory benchmark (written in C) on my lapto
     - CAS Latency 34 cycles, Total latency = CAS latency x cycle = 13.09 ns, Throughput 41.6 GB/s
   - GPU Intel Iris, 1.30 GHz
 
+[Graphical representation](topology.png)
 Benchmarks run using the software [lmbench](http://lmbench.sourceforge.net/).
 
 ## Summary plots (details below)
