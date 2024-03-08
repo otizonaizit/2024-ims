@@ -7,6 +7,9 @@ import matplotlib
 from matplotlib import pyplot as plt
 plt.style.use('ggplot')
 matplotlib.rcParams['font.size'] = 12
+matplotlib.rcParams['font.family'] = ['Exo 2', 'sans-serif']
+
+from bench import NSERIES
 
 def get_xlabels(x):
     xlabels = []
@@ -25,6 +28,7 @@ def get_xlabels(x):
 def get_ylabels(y):
     ylabels = []
     for power in y:
+        power = int(np.log10(power))
         if power < -6:
             value = 10**(power+9)
             ylabels.append(f'{value}ns')
@@ -40,10 +44,12 @@ def get_ylabels(y):
     return ylabels
 
 prefix = 'results_'
+maxy = 1e1
+miny = 1e-6
 for results in (f for f in os.listdir('.') if f.startswith(prefix)):
     cpu = results.removeprefix(prefix)
 
-    title = f'Loading data ({cpu})'
+    title = f'Loading {NSERIES} time series ({cpu})'
     sizes, bads, goods = [], [], []
     with open(results, 'r') as fh:
         for line in fh:
@@ -54,29 +60,44 @@ for results in (f for f in os.listdir('.') if f.startswith(prefix)):
     goods = np.array(goods)
     bads = np.array(bads)
     x = np.log2(sizes)
-    y1 = np.log10(goods)
-    y2 = np.log10(bads)
+    y1 = goods
+    y2 = bads
     # generate two plots: good+bad timings and slowdown plot
     plt.figure(figsize=(8.5, 7.5))
-    p1, = plt.plot(x, y1, 'o')
-    p2, = plt.plot(x, y2, 'o')
-    plt.xlabel('size')
+    p1, = plt.semilogy(x, y1, 'o')
+    p2, = plt.semilogy(x, y2, 'o')
+    plt.xlabel('size of one time series')
     plt.ylabel('load time (ms)')
+    plt.grid(None)
+    plt.grid(which='both', axis='both')
     plt.xticks(x, get_xlabels(x), rotation=60)
-    yticks = np.arange(min(np.floor(y1[0]),np.floor(y2[0])),
-                       max(np.ceil(y1[-1]), np.ceil(y2[-1]))+1)
-    plt.yticks(yticks, get_ylabels(yticks.astype(int)))
+    plt.ylim(miny, maxy)
+    yticks = np.logspace(int(np.log10(miny)),
+                         int(np.log10(maxy)),
+                         num=int(np.log10(maxy/miny))+1)
+    plt.yticks(yticks, get_ylabels(yticks))
+    plt.tick_params(axis='y', labelright=True, right=True)
     plt.legend((p1, p2), ('contiguous', 'flipped'))
-    miny = min(goods.min(), bads.min())
-    maxy = max(goods.max(), bads.max())
     plt.title(title + ' - timings')
     plt.savefig(f'loading-timings-{cpu}.svg')
 
     # slowdown plot
     plt.figure(figsize=(8.5, 7.5))
     p1, = plt.plot(x, bads/goods, 'o')
-    plt.xlabel('size')
+    plt.xlabel('size of one time series')
     plt.ylabel('slowdown')
+    plt.grid(None)
+    plt.grid(which='both', axis='both')
     plt.xticks(x, get_xlabels(x), rotation=60)
+    plt.tick_params(axis='y', which='both', reset=True, labelright=True, right=True)
+    lmaxy = (bads/goods).max()
+    yticks = range(0, int(np.ceil(lmaxy))+1)
+    yticks_labels = []
+    for i in yticks:
+        if not i%5:
+            yticks_labels.append(str(i))
+        else:
+            yticks_labels.append('')
+    plt.yticks(yticks, yticks_labels)
     plt.title(title + ' - slowdown')
     plt.savefig(f'loading-slowdown-{cpu}.svg')

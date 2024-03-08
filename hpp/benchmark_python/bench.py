@@ -7,9 +7,8 @@ import timeit
 
 import numpy as np
 
-CPU = sys.argv[1]
-COUNT = (30, )
-POWS = 2**np.arange(6, 23 + 1, dtype=int)
+NSERIES = 32
+POWS = 2**np.arange(4, 25 + 1, dtype=int)
 
 # Size of one dimensional numpy arrays of dtype 'float64':
 # A fix overhead of 96 bytes plus a variable size:
@@ -27,22 +26,21 @@ def load_data_column(x, time_series):
         x[:, column] = ts
     return x
 
-for n_series in COUNT:
+if __name__ == '__main__':
+    CPU = sys.argv[1]
     float_items = POWS
-    byte_sizes = n_series*float_items*8
+    byte_sizes = (float_items*8) #+ 96
     bads = []
     goods = []
     results = open(f'results_cpu{CPU}', 'wt')
     for i, len_one_series in enumerate(float_items):
-        time_series = []
-        for idx in range(n_series):
-            time_series.append(np.zeros(len_one_series, dtype='float64'))
-        x = np.zeros((n_series, len_one_series), dtype='float64')
+        time_series = np.zeros((NSERIES, len_one_series), dtype='float64')
+        x = np.empty((NSERIES, len_one_series), dtype='float64')
         print('Timing good...')
-        good = min(timeit.repeat(lambda: load_data_row(x, time_series), number=3))
-        x = np.zeros((len_one_series, n_series), dtype='float64')
+        good = min(timeit.repeat(lambda: load_data_row(x, time_series), number=5))/5
+        x = np.empty((len_one_series, NSERIES), dtype='float64')
         print('Timing bad...')
-        bad = min(timeit.repeat(lambda: load_data_column(x, time_series), number=3))
+        bad = min(timeit.repeat(lambda: load_data_column(x, time_series), number=5))/5
         print(f'{len_one_series}/{POWS[-1]} {good} {bad}')
         bads.append(bad)
         goods.append(good)
