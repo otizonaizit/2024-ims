@@ -18,7 +18,8 @@ These are the results of a low level memory benchmark (written in C) on my lapto
     - CAS Latency 34 cycles, Total latency = CAS latency x cycle = 13.09 ns, Throughput 41.6 GB/s
   - GPU Intel Iris, 1.30 GHz
 
-[Graphical representation](topology.png)
+![Graphical representation](topology.png)
+
 Benchmarks run using the software [lmbench](http://lmbench.sourceforge.net/).
 
 ## Summary plots (details below)
