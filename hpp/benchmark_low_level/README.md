@@ -4,8 +4,8 @@ These are the results of a low level memory benchmark (written in C) on my lapto
 
   - Lenovo - T14 Gen 4
   - CPU i7-1365U: 
-    - 2x "performance cores" (Intel Core) max 5.20 GHz (0.19 ns/cycle) with Hyperthreading
-    - 8x "efficient cores" (Intel Atom) max 3.90 GHz (0.26 ns/cycle) without Hyperthreading
+    - 2x "performance cores" (Intel Core) max 5.20 GHz (0.19 ns/cycle) with Hyper-Threading
+    - 8x "efficient cores" (Intel Atom) max 3.90 GHz (0.26 ns/cycle)
   - L1 (data) cache P-Core 48 KB
   - L1 (data) cache E-Core 32 KB
   - L2 cache P-Core 1280 KB
