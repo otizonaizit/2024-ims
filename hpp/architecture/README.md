@@ -2,18 +2,31 @@
   - Primer on CPU (x86_64) architecture and the memory hierarchy:
     - CPU registers ≈ 160 (plus another ~500 model specific), latency: 0 cycles, capacity: 8 bytes
     - x86-64 instruction set, with ≈ 2000 instructions with mnemonic (plus an unknown number of "undocumented" instructions ~ 10k)
+    - (single instruction, mutiple data [8 or 16 data units]) SIMD CPUs
     - L-Caches: L1/L2/L3, with cache lines of 128B, latencies: 1-40 cycles, capacity:  ~KB and ~MB
     - Main memory: RAM pages 4KB or 64KB, latency: 50~100 cycles, capacity ~GBs
     - Storage (local disks): disk transfer blocks 4KB to 64MB, latency: 0.1ms (300k cycles), capacity: ~TBs
     - Remote Storage (network): typically limited by ethernet connection (1-10 GB/s), latency: 10~100 ms, capacity: ∞
   - understand the trade-offs involved:
       - capacity
-      - latency
-      - bandwidth
+      - latency ≈ (time-when-data-available-on-output-pins – time-when-data-requested) ➔ measured in ns: clock_ticks × number-of-ticks-per-operation
+      - bandwidth ≈ clock_tick × data-transfer/tick × bus-width 
       - volatility
       - cost
       - physical limits (heat dissipation, density, size, lifetime)
-  - exploit temporal and spacial locality of data
+  - exploit temporal and spacial locality of data to overcome the "starving CPU" problem
+
+# …and what about the GPU?
+![GPU vs CPU architecture](GPUvsCPU-architecture.png)
+  - a GPU has many (n the order of hundreds) SIMT (single instruction, multiple thread) cores, so called SMs (Streaming Multiprocessors), each one with local L1 and shared L2 caches, and shared RAM (due to to the high parallelism, with huge bandwidth, in the order of ~1TB/s
+  - The SMs are specialized on data types. In order of abundance, the following data types are supported: int8, int32, int64, float16, float32, float64
+  - performance depends on:
+    - memory bandwidth: usually higher than CPU's RAM
+    - "math" bandwidth: usually higher than CPU's, but much more limited in capability; for example branches (if/else) are expensive
+    - latency: usually much higher than  CPU's ➔ the more parallel threads are run the less the price of high latency is paid (latency "hiding") 
+    - spatial locality is extremely critical
+  - A portion of the GPU-RAM is accessible to the CPU ➔ the GPU performs the copies
+  - The PCI-Bus bottleneck: data needs to flow from main (CPU) memory to GPU memory and back!
 
 # Computer Architecture ( a concrete example)
 My Laptop:
