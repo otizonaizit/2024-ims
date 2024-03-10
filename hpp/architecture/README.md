@@ -27,6 +27,7 @@
     - spatial locality is extremely critical
   - A portion of the GPU-RAM is accessible to the CPU ➔ the GPU performs the copies
   - The PCI-Bus bottleneck: data needs to flow from main (CPU) memory to GPU memory and back!
+  - Problems on a cluster: the GPU does not really support simultanous multiple users payloads!
 
 # Computer Architecture ( a concrete example)
 My Laptop:
