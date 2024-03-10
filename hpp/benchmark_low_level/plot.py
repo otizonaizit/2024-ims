@@ -27,21 +27,41 @@ def get_labels(x):
     return xlabels
 
 
+# manually set ticks, to disable, set ticks = None
+
+line = np.linspace(1, 10, 9, endpoint=False)
+yticks = list(line)+list(line*10)+list(line[:2]*100)
+
+ylabels = (1, 10, 100)
+ticks = {'l': {'cpu0' : (yticks, [str(int(i)) if i in ylabels else '' for i in yticks]),
+               'cpu10': (yticks, [str(int(i)) if i in ylabels else '' for i in yticks])},
+         'bw': {'cpu0' : (range(15,31), range(15,31)),
+                'cpu10': (range(7,22), range(7,22))},
+         }
+
+# manually set limits, to disable set to ylim = None
+
+ylim = {'l' : {'cpu0' : (1, 200),
+               'cpu10': (1, 200)},
+        }
+
 # load all CSV files
 for cpu in ('cpu0', 'cpu10'):
     for type_ in ('bw', 'l'):
         if type_ == 'bw':
             suffix = ('r', 'w')
-            ylabel = 'bandwidth GB/s'
-            title = f'Memory Bandwidth ({cpu})'
+            ylabel = ''
+            title = f'Memory Bandwidth ({cpu}) [GB/s]'
             legend1, legend2 = 'read', 'write'
             pic = f'bandwidth-{cpu}.svg'
+            plt_func = plt.plot
         else:
             suffix = ('seq', 'rnd')
-            ylabel = 'latency (ns)'
-            title = f'Memory Latency ({cpu})'
+            ylabel = ''
+            title = f'Memory Latency ({cpu}) [ns]'
             legend1, legend2 = 'sequential access', 'random access'
             pic = f'latency-{cpu}.svg'
+            plt_func = plt.semilogy
 
 
         data1 = np.loadtxt(f'{cpu}-{type_}{suffix[0]}.csv', delimiter=',')
@@ -66,11 +86,15 @@ for cpu in ('cpu0', 'cpu10'):
         xlabels = get_labels(x1)
 
         plt.figure(figsize=(8.5,7.5))
-        p1, = plt.plot(x1, y1, 'o')
+        p1, = plt_func(x1, y1, 'o')
         plt.ylabel(ylabel)
         plt.xlabel(xlabel)
-        p2, = plt.plot(x2, y2, 'o')
+        p2, = plt_func(x2, y2, 'o')
+        if ylim and type_ in ylim:
+            plt.ylim(*ylim[type_][cpu])
         plt.xticks(x1, xlabels, rotation=60)
+        if ticks and type_ in ticks:
+            plt.yticks(*ticks[type_][cpu])
         plt.legend((p1, p2), (legend1, legend2))
         miny = min(y1.min(), y2.min())
         maxy = max(y1.max(), y2.max())
