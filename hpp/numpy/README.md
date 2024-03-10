@@ -8,8 +8,10 @@
 ## two dimensions, rectangular, int32
 ![2d array - rectangular](ndarray-memory-layout-2d-rectangular.svg)
 
+## what about Python lists?
+![memory layout of a Python list](python-list-memory-layout.svg)
 
-  - (by the way) memory layout of a list in Python
+
   - strides, flags, view vs. copy
 
 
