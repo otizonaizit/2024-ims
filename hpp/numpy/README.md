@@ -11,8 +11,11 @@
 ## what about Python lists?
 ![memory layout of a Python list](python-list-memory-layout.svg)
 
-
-  - strides, flags, view vs. copy
-
-
+## interesting attributes of numpy arrays
+  - `x.data`, `x.data.hex()`, `x.data.format`, `x.tobytes()`
+  - `x.flags`:
+    - `OWNDATA`
+    - `C_CONTIGUOUS`
+    - `F_CONTIGUOUS`
+    - more [flags](https://numpy.org/doc/stable/reference/generated/numpy.ndarray.flags.html)
 
