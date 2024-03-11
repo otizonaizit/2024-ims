@@ -7,20 +7,20 @@
     - Main memory: RAM pages 4KB or 64KB, latency: 50~100 cycles, capacity ~GBs
     - Storage (local disks): disk transfer blocks 4KB to 64MB, latency: 0.1ms (300k cycles), capacity: ~TBs
     - Remote Storage (network): typically limited by ethernet connection (1-10 GB/s), latency: 10~100 ms, capacity: ∞
-  - understand the trade-offs involved:
+  - Understand the trade-offs involved:
       - capacity
       - latency ≈ (time-when-data-available-on-output-pins – time-when-data-requested) ➔ measured in ns: clock_ticks × number-of-ticks-per-operation
       - bandwidth ≈ clock_tick × data-transfer/tick × bus-width 
       - volatility
       - cost
       - physical limits (heat dissipation, density, size, lifetime)
-  - exploit temporal and spacial locality of data to overcome the "starving CPU" problem
+  - Exploit temporal and spacial locality of data to overcome the "starving CPU" problem ➔ prefetching and speculative execution
 
 # …and what about the GPU?
 ![GPU vs CPU architecture](GPUvsCPU-architecture.png)
-  - a GPU has many (n the order of hundreds) SIMT (single instruction, multiple thread) cores, so called SMs (Streaming Multiprocessors), each one with local L1 and shared L2 caches, and shared RAM (due to to the high parallelism, with huge bandwidth, in the order of ~1TB/s
+  - A GPU has many (in the order of hundreds) SIMT (single instruction, multiple thread) cores, so called SMs (Streaming Multiprocessors), each one with local L1 and shared L2 caches, and shared RAM (due to to the high parallelism, with huge bandwidth, in the order of ~1TB/s
   - The SMs are specialized on data types. In order of abundance, the following data types are supported: int8, int32, int64, float16, float32, float64
-  - performance depends on:
+  - Performance depends on:
     - memory bandwidth: usually higher than CPU's RAM
     - "math" bandwidth: usually higher than CPU's, but much more limited in capability; for example branches (if/else) are expensive
     - latency: usually much higher than  CPU's ➔ the more parallel threads are run the less the price of high latency is paid (latency "hiding") 
