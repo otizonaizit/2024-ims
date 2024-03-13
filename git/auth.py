@@ -3,12 +3,13 @@ import json
 import pathlib
 import random
 import string
+import sys
 import tempfile
 
 # name of the file where we store the pw database
 PWDB_FLNAME = pathlib.Path('pwdb.json')
 
-# the pw database will be stored in a temporary directory
+# the pw database will be stored in the local directory
 PWDB_DEFAULTPATH =  PWDB_FLNAME
 
 # list of valid characters for salt (only ASCII letters + digits + punctuation)
@@ -16,6 +17,10 @@ CHARS = string.ascii_letters + string.digits + string.punctuation
 
 # length of salt
 SALT_LENGTH = 5
+
+def err(text, status):
+    sys.stderr.write(f'{sys.argv[0]}: {text}!\n')
+    sys.exit(status)
 
 def get_credentials():
     # get input from terminal
@@ -26,19 +31,19 @@ def get_credentials():
     return (username, password)
 
 def authenticate(username, pass_text, pwdb):
-    status = False
+    success = False
     if username in pwdb:
         # get the salt from the database
         salt = pwdb[username][1]
         # calculate hash and compare with stored hash
         if pwhash(pass_text, salt) == pwdb[username][0]:
-            status = True
-    return status
+            success = True
+    return success
 
 def add_user(username, password, salt, pwdb, pwdb_path):
     # do not try to add a username twice
     if username in pwdb:
-        raise Exception('Username already exists [%s]' %username)
+        err(f'Username already exists [{username}]', 2)
     else:
         pwdb[username] = (pwhash(password,salt), salt)
         write_pwdb(pwdb, pwdb_path)
@@ -51,10 +56,10 @@ def read_pwdb(pwdb_path):
             pwdb = json.load(pwdb_file)
     except json.decoder.JSONDecodeError as exc:
         # this happens when the json data is invalid
-        raise Exception(f'Invalid database {pwdb_path}: {exc}')
+        err(f'Invalid database {pwdb_path}: {exc}', 3)
     except Exception as exc:
         # this is a catch-all condition
-        raise Exception(f'Unkown error reading {pwdb_path}: {exc}')
+        err(f'Error reading {pwdb_path}: {exc}', 4)
     return pwdb
 
 def write_pwdb(pwdb, pwdb_path):
@@ -97,4 +102,4 @@ if __name__ == '__main__':
             add_user(username, password, salt, pwdb, PWDB_DEFAULTPATH)
     else:
         # report wrong password
-        print('Wrong password!')
+        err('Wrong password!', 1)
