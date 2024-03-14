@@ -27,8 +27,8 @@ def get_credentials():
 def authenticate(username, pass_text, pwdb):
     success = False
     if username in pwdb:
-        # compare with stored password
-        if pass_text == pwdb[username]:
+        # calculate hash and compare with stored hash
+        if pwhash(pass_text) == pwdb[username]:
             success = True
     return success
 
@@ -37,7 +37,7 @@ def add_user(username, password, pwdb, pwdb_path):
     if username in pwdb:
         err(f'Username already exists [{username}]', 2)
     else:
-        pwdb[username] = password
+        pwdb[username] = pwhash(password)
         write_pwdb(pwdb, pwdb_path)
 
 def read_pwdb(pwdb_path):
@@ -57,6 +57,15 @@ def read_pwdb(pwdb_path):
 def write_pwdb(pwdb, pwdb_path):
     with open(pwdb_path, 'wt') as pwdb_file:
         json.dump(pwdb, pwdb_file)
+
+def pwhash(pass_text):
+    # simple additive hash -> very insecure!
+    hash_ = 0
+    for idx, char in enumerate(pass_text):
+        # use idx as a multiplier, so that shuffling the characters returns a
+        # different hash
+        hash_ += (idx+1)*ord(char)
+    return hash_
 
 if __name__ == '__main__':
     # ask for credentials
