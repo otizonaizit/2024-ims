@@ -12,11 +12,9 @@ PWDB_FLNAME = pathlib.Path('pwdb.json')
 # the pw database will be stored in the local directory
 PWDB_DEFAULTPATH = PWDB_FLNAME
 
-
 def err(text, status):
     sys.stderr.write(f'{sys.argv[0]}: {text}!\n')
     sys.exit(status)
-
 
 def get_credentials():
     # get input from terminal
@@ -26,7 +24,6 @@ def get_credentials():
     password = getpass.getpass('Enter your password: ')
     return (username, password)
 
-
 def authenticate(username, pass_text, pwdb):
     success = False
     if username in pwdb:
@@ -35,7 +32,6 @@ def authenticate(username, pass_text, pwdb):
             success = True
     return success
 
-
 def add_user(username, password, pwdb, pwdb_path):
     # do not try to add a username twice
     if username in pwdb:
@@ -43,7 +39,6 @@ def add_user(username, password, pwdb, pwdb_path):
     else:
         pwdb[username] = pwhash(password, get_salt(username))
         write_pwdb(pwdb, pwdb_path)
-
 
 def read_pwdb(pwdb_path):
     # try to read from the database
@@ -59,11 +54,9 @@ def read_pwdb(pwdb_path):
         err(f'Error reading {pwdb_path}: {exc}', 4)
     return pwdb
 
-
 def write_pwdb(pwdb, pwdb_path):
     with open(pwdb_path, 'wt') as pwdb_file:
         json.dump(pwdb, pwdb_file)
-
 
 def pwhash(pass_text, salt):
     # simple additive hash -> very insecure!
@@ -74,7 +67,6 @@ def pwhash(pass_text, salt):
         hash_ += (idx + 1) * ord(char)
     return f"{salt}+{hash_}"
 
-
 def get_salt(user_name):
     hash_ = 0
     for idx, char in enumerate(user_name):
@@ -82,7 +74,6 @@ def get_salt(user_name):
         # different hash
         hash_ += (idx + 1) * ord(char)
     return hash_
-
 
 if __name__ == '__main__':
     # ask for credentials
