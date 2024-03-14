@@ -28,8 +28,10 @@ def get_credentials():
 def authenticate(username, pass_text, pwdb):
     success = False
     if username in pwdb:
+        pwd, salt = pwdb[username]['pwd'], pwdb[username]['salt']
+
         # calculate hash and compare with stored hash
-        if pwhash(pass_text) == pwdb[username]:
+        if pwhash(pass_text, salt) == pwd:
             success = True
     return success
 
@@ -38,7 +40,11 @@ def add_user(username, password, pwdb, pwdb_path):
     if username in pwdb:
         err(f'Username already exists [{username}]', 2)
     else:
-        pwdb[username] = pwhash(password)
+        salt = get_salt()
+        pwdb[username] = {
+            'pwd': pwhash(password, salt),
+            'salt': salt
+        }
         write_pwdb(pwdb, pwdb_path)
 
 def read_pwdb(pwdb_path):
@@ -59,8 +65,13 @@ def write_pwdb(pwdb, pwdb_path):
     with open(pwdb_path, 'wt') as pwdb_file:
         json.dump(pwdb, pwdb_file)
 
-def pwhash(pass_text):
-    text = pass_text.encode('utf-8')
+def get_salt():
+    # generate a random salt
+    salt = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
+    return salt
+
+def pwhash(pass_text, salt):
+    text = pass_text.encode('utf-8') + salt.encode('utf-8')
     # use a secure hash function
     hash_ = hashlib.sha256(text).hexdigest()
     return hash_
