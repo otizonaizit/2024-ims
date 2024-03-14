@@ -27,8 +27,9 @@ def get_credentials():
 def authenticate(username, pass_text, pwdb):
     success = False
     if username in pwdb:
+        salt = pwdb[username]['salt']
         # calculate hash and compare with stored hash
-        if pwhash(pass_text) == pwdb[username]:
+        if pwhash(pass_text + salt) == pwdb[username]['hash']:
             success = True
     return success
 
@@ -37,7 +38,8 @@ def add_user(username, password, pwdb, pwdb_path):
     if username in pwdb:
         err(f'Username already exists [{username}]', 2)
     else:
-        pwdb[username] = pwhash(password)
+        salt = get_salt(pwdb)
+        pwdb[username] = {'hash': pwhash(password + salt), 'salt': salt}
         write_pwdb(pwdb, pwdb_path)
 
 def read_pwdb(pwdb_path):
@@ -66,6 +68,15 @@ def pwhash(pass_text):
         # different hash
         hash_ += (idx+1)*ord(char)
     return hash_
+
+def get_salt(pwdb):
+    salts = [x[1] for x in pwdb.keys()]
+    salt = ""
+    for _ in range(5):
+        salt += random.choice(string.ascii_letters)
+    while salt in salts:
+        salt = get_salt(pwdb)
+    return salt
 
 if __name__ == '__main__':
     # ask for credentials
