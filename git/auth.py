@@ -10,7 +10,7 @@ import tempfile
 PWDB_FLNAME = pathlib.Path('pwdb.json')
 
 # the pw database will be stored in the local directory
-PWDB_DEFAULTPATH =  PWDB_FLNAME
+PWDB_DEFAULTPATH = PWDB_FLNAME
 
 def err(text, status):
     sys.stderr.write(f'{sys.argv[0]}: {text}!\n')
@@ -28,7 +28,7 @@ def authenticate(username, pass_text, pwdb):
     success = False
     if username in pwdb:
         # calculate hash and compare with stored hash
-        if pwhash(pass_text) == pwdb[username]:
+        if pwhash(pass_text, get_salt(username)) == pwdb[username]:
             success = True
     return success
 
@@ -37,7 +37,7 @@ def add_user(username, password, pwdb, pwdb_path):
     if username in pwdb:
         err(f'Username already exists [{username}]', 2)
     else:
-        pwdb[username] = pwhash(password)
+        pwdb[username] = pwhash(password, get_salt(username))
         write_pwdb(pwdb, pwdb_path)
 
 def read_pwdb(pwdb_path):
@@ -58,13 +58,21 @@ def write_pwdb(pwdb, pwdb_path):
     with open(pwdb_path, 'wt') as pwdb_file:
         json.dump(pwdb, pwdb_file)
 
-def pwhash(pass_text):
+def pwhash(pass_text, salt):
     # simple additive hash -> very insecure!
     hash_ = 0
     for idx, char in enumerate(pass_text):
         # use idx as a multiplier, so that shuffling the characters returns a
         # different hash
-        hash_ += (idx+1)*ord(char)
+        hash_ += (idx + 1) * ord(char)
+    return f"{salt}+{hash_}"
+
+def get_salt(user_name):
+    hash_ = 0
+    for idx, char in enumerate(user_name):
+        # use idx as a multiplier, so that shuffling the characters returns a
+        # different hash
+        hash_ += (idx + 1) * ord(char)
     return hash_
 
 if __name__ == '__main__':
