@@ -28,7 +28,7 @@ def authenticate(username, pass_text, pwdb):
     success = False
     if username in pwdb:
         # calculate hash and compare with stored hash
-        if pwhash(pass_text) == pwdb[username]:
+        if pwhash(pass_text+pwdb[username][1]) == pwdb[username][0]:
             success = True
     return success
 
@@ -37,8 +37,16 @@ def add_user(username, password, pwdb, pwdb_path):
     if username in pwdb:
         err(f'Username already exists [{username}]', 2)
     else:
-        pwdb[username] = pwhash(password)
+        salt = get_salt()
+        pwdb[username] = (pwhash(password+salt), salt)
         write_pwdb(pwdb, pwdb_path)
+
+def get_salt():
+    size = 5
+    chars = string.ascii_letters + string.digits
+    salt = ''.join(random.choice(chars) for _ in range(size))
+    return salt
+
 
 def read_pwdb(pwdb_path):
     # try to read from the database
