@@ -1,4 +1,5 @@
 import getpass
+import hashlib
 import json
 import pathlib
 import random
@@ -59,12 +60,9 @@ def write_pwdb(pwdb, pwdb_path):
         json.dump(pwdb, pwdb_file)
 
 def pwhash(pass_text):
-    # simple additive hash -> very insecure!
-    hash_ = 0
-    for idx, char in enumerate(pass_text):
-        # use idx as a multiplier, so that shuffling the characters returns a
-        # different hash
-        hash_ += (idx+1)*ord(char)
+    text = pass_text.encode('utf-8')
+    # use a secure hash function
+    hash_ = hashlib.sha256(text).hexdigest()
     return hash_
 
 if __name__ == '__main__':
