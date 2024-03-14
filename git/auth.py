@@ -1,5 +1,4 @@
 import getpass
-import hashlib
 import json
 import pathlib
 import random
@@ -28,8 +27,8 @@ def get_credentials():
 def authenticate(username, pass_text, pwdb):
     success = False
     if username in pwdb:
-        # calculate hash and compare with stored hash
-        if pwhash(pass_text) == pwdb[username]:
+        # compare with stored password
+        if pass_text == pwdb[username]:
             success = True
     return success
 
@@ -38,7 +37,7 @@ def add_user(username, password, pwdb, pwdb_path):
     if username in pwdb:
         err(f'Username already exists [{username}]', 2)
     else:
-        pwdb[username] = pwhash(password)
+        pwdb[username] = password
         write_pwdb(pwdb, pwdb_path)
 
 def read_pwdb(pwdb_path):
@@ -58,11 +57,6 @@ def read_pwdb(pwdb_path):
 def write_pwdb(pwdb, pwdb_path):
     with open(pwdb_path, 'wt') as pwdb_file:
         json.dump(pwdb, pwdb_file)
-
-def pwhash(pass_text):
-    # encode to bytes
-    bpass = pass_text.encode('utf8')
-    return hashlib.sha256(bpass).hexdigest()
 
 if __name__ == '__main__':
     # ask for credentials
