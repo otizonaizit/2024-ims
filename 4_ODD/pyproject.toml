@@ -1,0 +1,18 @@
+[project]
+name = "brewing"
+version = "0.1.0"
+description = "a python package for brewing potions"
+authors = [{ name = "H. Granger", email = "h.granger@hogwarts.ac.uk" }]
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+dependencies = ["numpy >= 1.14.0", "pytest >= 3.0.0"]
+
+[tool.setuptools]
+packages = ["brewing"]
+
+[project.urls]
+"Homepage" = "https://github.com/ASPP/2023-heraklion-ODD"
+
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,5 @@
+venv_folder/
+venv/
+.idea/
+.DS_Store
+brewing/__pycache__/
